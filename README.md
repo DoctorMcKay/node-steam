@@ -206,6 +206,20 @@ Cancels your proposed trade to the specified user.
 
 Sends a message to Game Coordinator. `body` must be a serialized message without the header (it will be added by node-steam). `type` must be masked accordingly if it's a protobuf message. If any extra arguments are provided and this message receives a response (JobID-based), they will be passed to the ['fromGC' event](#fromgc) handler.
 
+### getGameServers([conditions,] callback)
+
+Requests a list of up to 5,000 game servers from the GMS. The optional `conditions` argument should be an object containing up to 4 properties:
+
+- `appid` - The AppID to get servers for (this can also be accomplished by passing `\appid\<AppID>` to the filters string)
+- `region` - The [region code](https://developer.valvesoftware.com/wiki/Master_Server_Query_Protocol#Region_codes) to find servers in
+- `filters` - A [filter string](https://developer.valvesoftware.com/wiki/Master_Server_Query_Protocol#Filter)
+- `maximum` - The maximum number of servers to return. Maximum (and default) is 5000.
+
+The callback has two arguments:
+
+- `err` - If an error occurred, this is a string explaining the error
+- `servers` - An array of server objects. Each object has an `ip`, `port`, and a count of in-game `players` (as reported by Steam)
+
 ## Events
 
 ### 'error'
