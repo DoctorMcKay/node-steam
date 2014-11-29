@@ -97,6 +97,10 @@ An object that maps groups' SteamIDs to various data about them like name, numbe
 
 **Important**: You won't get initial group data until you [go online](#setpersonastate).
 
+### licenses
+
+An array of objects containing info about the packages you own.
+
 ## Methods
 
 ### logOn(logOnDetails)
@@ -395,3 +399,8 @@ You can craft a link to the event using the formula `http://steamcommunity.com/g
 * optional extra args
 
 A message has been received from GC. The extra arguments are the same as passed to [toGC](#togcappid-type-body-callback) if this message is a JobID-based response to it.
+
+### 'licenses'
+* licenses
+
+Your license list has been received from Steam. The `licenses` argument contains an array of objects containing info about the packages you own. The `licenses` property will be updated after this is emitted, allowing you to compare to see what changed.
