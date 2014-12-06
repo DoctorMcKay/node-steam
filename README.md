@@ -177,26 +177,6 @@ Self-explanatory.
 
 Invites the specified user to the specified chat.
 
-### getSteamLevel(steamids, callback)
-
-Requests the Steam level of a number of specified accounts. The `steamids` argument should be an array of SteamIDs.
-
-The single object parameter of the `callback` has the requested SteamIDs as properties and the level as their values. Example:
-
-```js
-{
-	"76561198006409530": 62,
-	"76561197960287930": 7
-}
-```
-
-### getNumberOfCurrentPlayers(appID, callback)
-
-Requests the number of people currently playing a specified game. You can specify appID 0 to get the number of users online on Steam. The callback will be called with two parameters:
-
-- `result` - A result from `Steam.EResult`
-- `players` - The number of players for the specified game
-
 ### trade(steamID)
 
 Sends a trade request to the specified user.
@@ -213,101 +193,22 @@ Cancels your proposed trade to the specified user.
 
 Sends a message to Game Coordinator. `body` must be a serialized message without the header (it will be added by node-steam). `type` must be masked accordingly if it's a protobuf message. If any extra arguments are provided and this message receives a response (JobID-based), they will be passed to the ['fromGC' event](#fromgc) handler.
 
-### getGameServers([conditions,] callback)
+### serverQuery(conditions, callback)
 
-Requests a list of up to 5,000 game servers from the GMS. The optional `conditions` argument should be an object containing up to 4 properties:
+Requests a list of up to 5,000 game servers from the GMS. The `conditions` argument should be an object containing up to 5 properties:
 
-- `appid` - The AppID to get servers for (this can also be accomplished by passing `\appid\<AppID>` to the filters string)
-- `region` - The [region code](https://developer.valvesoftware.com/wiki/Master_Server_Query_Protocol#Region_codes) to find servers in
-- `filters` - A [filter string](https://developer.valvesoftware.com/wiki/Master_Server_Query_Protocol#Filter)
-- `maximum` - The maximum number of servers to return. Maximum (and default) is 5000.
+- `appId` - The AppID to get servers for (this can also be accomplished by passing `\appid\<AppID>` to the filters string)
+- `geoLocationIp` - Presumably the IP address of the client for geolocation, in unsigned 32-bit integer notation.
+- `regionCode` - The [region code](https://developer.valvesoftware.com/wiki/Master_Server_Query_Protocol#Region_codes) to find servers in
+- `filterText` - A [filter string](https://developer.valvesoftware.com/wiki/Master_Server_Query_Protocol#Filter)
+- `maxServers` - The maximum number of servers to return. Maximum (and default) is 5000.
+
+Alternatively, `conditions` can be a string which will be expanded into `{"filterText": conditions}`.
 
 The callback has two arguments:
 
 - `err` - If an error occurred, this is a string explaining the error
-- `servers` - An array of server objects. Each object has an `ip`, `port`, and a count of in-game `players` (as reported by Steam)
-
-### picsGetChangesSince(lastChangeNumber, sendAppChangelist, sendPackageChangelist, callback)
-
-Requests all changes since `lastChangeNumber`. The `sendAppChangelist` and `sendPackageChangelist` parameters are booleans and should be fairly self-explanatory. The `callback` will be called with a single object argument that will look something like this:
-
-```js
-{
-	"currentChangeNumber": 793054,
-	"sinceChangeNumber": 793046,
-	"packageChanges": [
-		{
-			"packageid": 55587,
-			"changeNumber": 793047
-		},
-		{
-			"packageid": 55588,
-			"changeNumber": 793047
-		},
-		{
-			"packageid": 55589,
-			"changeNumber": 793047
-		}
-	],
-	"appChanges": [
-		{
-			"appid": 212280,
-			"changeNumber": 793048,
-			"needsToken": true
-		},
-		{
-			"appid": 257510,
-			"changeNumber": 793050,
-			"needsToken": true
-		},
-		{
-			"appid": 293340,
-			"changeNumber": 793054
-		},
-		{
-			"appid": 318530,
-			"changeNumber": 793051
-		},
-		{
-			"appid": 327590,
-			"changeNumber": 793053,
-			"needsToken": true
-		},
-		{
-			"appid": 334960,
-			"changeNumber": 793052,
-			"needsToken": true
-		},
-		{
-			"appid": 335950,
-			"changeNumber": 793047,
-			"needsToken": true
-		}
-	]
-}
-```
-
-### picsGetProductInfo(apps, packages, callback)
-
-Gets product info for a number of `apps` or `packages`. `apps` and `packages` should be arrays of appids or packageids, respectively. If you have an access token for an app or a package, you should specify an object of the format `{"appid": 1234, "accessToken": "foo"}` instead of an appid. For a package, substitute `packageid` for `appid`.
-
-The `callback` will be called with a single object parameter. Properties of note:
-
-- `apps` - An object containing data about the apps you requested. The keys will be the appids. Each app will have a `changeNumber` property, which is the number of the last changeset in which the app changed. Each app will also have a `missingToken` property, which will be `true` if you need to specify a token to get more data about the app. A `data` property is defined on each app, which contains all of the app's data.
-- `packages` - Same as above, but for packages.
-- `unknownAppids` - An array of appids that you requested data for that don't exist.
-- `unknownPackageids` - Same as above, but for packages.
-
-### picsGetAccessToken(apps, packages, callback)
-
-Requests an access token for a number of `apps` or `packages`. The `apps` and `packages` parameters should be arrays of appids or packageids, respectively.
-
-The `callback` will be called with a single object parameter, which will have between two and four properties:
-
-- `appAccessTokens` - An object of format `{"1234": "accessToken"}` where `1234` is the appid of some app and `accessToken` is an access token for that app.
-- `appDeniedTokens` - An array of appids for which Steam refused to send you an access token. Undefined if none.
-- `packageAccessTokens` - Same as `appAccessTokens`, but for packages.
-- `packageDeniedTokens` - Same as `appDeniedTokens`, but for packages.
+- `servers` - An array of server objects. Each object has a `serverIp`, `serverPort`, and a count of in-game `authPlayers` (as reported by Steam).
 
 ## Events
 
