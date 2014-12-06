@@ -13,7 +13,8 @@
     "buffer-crc32": "*",
     "protobuf": "*",
     "ref": "*",
-    "ursa": "*"
+    "ursa": "*",
+    "vdf": "*"
   },
   "engines": {
     "node": "0.10.x"
