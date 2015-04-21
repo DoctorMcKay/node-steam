@@ -98,9 +98,11 @@ An object that maps groups' SteamIDs to their `EClanRelationship` with you. Empt
 Connects to Steam and logs you on upon connecting. `logOnDetails` is an object with the following properties:
 
 * `accountName` - required.
-* `password` - required.
+* `password` - required unless using a loginKey.
 * `authCode` - Steam Guard code. Must be valid if provided, otherwise the logon will fail. Note that Steam Guard codes expire after a short while.
 * `shaSentryfile` - sentry hash. If not provided, you'll receive one through the ['sentry' event](#sentry) (if the logon succeeds). If no Steam Guard code is provided, the hash must be already registered with this account, otherwise it's ignored.
+* `shouldRememberPassword` - `true` if you want to get a [`loginKey`](#loginkey) for use in subsequent logons, `false` or omitted otherwise
+* `loginKey` - A saved-password login key, which can be used in place of `password`
 
 If you provide neither a Steam Guard code nor a sentry hash registered with this account, the logon will fail and you'll receive an email with the code.
 
@@ -216,6 +218,11 @@ You can now safely use all API.
 * your new sessionID
 
 If you are using Steam Community (including trading), you should call [webLogOn](#weblogoncallback) again, since your current cookie is no longer valid.
+
+### 'loginKey'
+* your login key
+
+Only emitted if you passed `true` to `shouldRememberPassword` in `logOn`. You can use the provided login key for subsequent logins.
 
 ### 'sentry'
 * a Buffer containing your Steam Guard sentry file hash
